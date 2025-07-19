@@ -29,7 +29,7 @@
     "fields": {
       "user": 2,
       "payment_date": "2025-07-22",
-      "paid_course": 2,
+      "paid_course": null,
       "paid_lesson": null,
       "amount": "25000.00",
       "payment_method": "transfer"

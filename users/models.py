@@ -1,5 +1,6 @@
 from django.conf import settings
-from django.contrib.auth.models import AbstractUser, UserManager
+from django.contrib.auth.models import AbstractUser
+from .managers import UserManager
 from django.db import models
 
 from materials.models import Course
