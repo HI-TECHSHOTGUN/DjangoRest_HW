@@ -3,7 +3,7 @@ from django.contrib.auth.models import AbstractUser
 from .managers import UserManager
 from django.db import models
 
-from materials.models import Course
+from materials.models import Course, Lessons
 
 
 # Create your models here.
@@ -74,7 +74,7 @@ class Payment(models.Model):
         verbose_name="Оплаченный курс",
     )
     paid_lessons = models.ForeignKey(
-        Course,
+        Lessons,
         on_delete=models.SET_NULL,
         blank=True,
         null=True,
