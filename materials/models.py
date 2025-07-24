@@ -48,7 +48,9 @@ class Lessons(models.Model):
         null=True,
     )
 
-    course = models.ForeignKey(Course, on_delete=models.CASCADE, verbose_name="Курс")
+    course = models.ForeignKey(
+        Course, on_delete=models.CASCADE, verbose_name="Курс", related_name="lessons"
+    )
 
     def __str__(self):
         return f"{self.name}"
