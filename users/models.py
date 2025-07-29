@@ -91,6 +91,8 @@ class Payment(models.Model):
         default=TRANSFER,
         verbose_name="Способ оплаты",
     )
+    stripe_session_id = models.CharField(max_length=255, blank=True, null=True)
+    payment_link = models.URLField(max_length=400, blank=True, null=True)
 
     def __str__(self):
         return f"Платеж от {self.user} на сумму {self.amount}"
