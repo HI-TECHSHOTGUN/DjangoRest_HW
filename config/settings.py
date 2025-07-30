@@ -13,6 +13,7 @@ https://docs.djangoproject.com/en/5.2/ref/settings/
 import os
 from pathlib import Path
 
+from celery.schedules import crontab
 from django.conf.global_settings import MEDIA_URL
 from dotenv import load_dotenv
 
@@ -49,6 +50,7 @@ INSTALLED_APPS = [
     "django_filters",
     "rest_framework_simplejwt",
     "drf_yasg",
+    "django_celery_beat"
 ]
 
 MIDDLEWARE = [
@@ -150,3 +152,24 @@ REST_FRAMEWORK = {
         'rest_framework.permissions.IsAuthenticated',
     ]
 }
+
+EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
+EMAIL_HOST = os.getenv('EMAIL_HOST')
+EMAIL_PORT = int(os.getenv('EMAIL_PORT'))
+EMAIL_USE_TLS = True if os.getenv('EMAIL_USE_TLS') == 'True' else False
+EMAIL_USE_SSL = True if os.getenv('EMAIL_USE_SSL') == 'True' else False
+EMAIL_HOST_USER = os.getenv('EMAIL_HOST_USER')
+EMAIL_HOST_PASSWORD = os.getenv('EMAIL_HOST_PASSWORD')
+DEFAULT_FROM_EMAIL = EMAIL_HOST_USER
+
+CELERY_BROKER_URL = os.getenv('REDIS_URL')
+CELERY_RESULT_BACKEND = os.getenv('REDIS_URL')
+
+CELERY_BEAT_SCHEDULE = {
+    'block_inactive_users_daily': {
+        'task': 'users.tasks.block_inactive_users',
+        'schedule': crontab(hour=0, minute=0),
+    },
+}
+
+CELERY_TIMEZONE = 'Europe/Moscow'
