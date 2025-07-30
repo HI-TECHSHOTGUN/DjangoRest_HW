@@ -8,7 +8,7 @@ from .models import User
 def block_inactive_users():
     """Блокировщик не активных поьзователей"""
     month_ago = timezone.now() - timedelta(days=30)
-    users_to_block = User.objects.filter(last_login__lt=month_ago, is_active=True)
+    users_to_block = User.objects.filter(last_login__lt=month_ago, is_active=True, is_superuser=False)
 
     count = users_to_block.update(is_active=False)
     print(f'Заблокировано {count} неактивных пользователей.')
