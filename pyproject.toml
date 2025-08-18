@@ -8,6 +8,20 @@ readme = "README.md"
 [tool.poetry.dependencies]
 python = "^3.11"
 django = "^5.2.4"
+pillow = "^11.3.0"
+djangorestframework = "^3.16.0"
+psycopg2-binary = "^2.9.10"
+dotenv = "^0.9.9"
+black = "^25.1.0"
+django-filter = "^25.1"
+djangorestframework-simplejwt = "^5.5.1"
+coverage = "^7.10.1"
+drf-yasg = "^1.21.10"
+stripe = "^12.3.0"
+celery = "^5.5.3"
+eventlet = "^0.40.2"
+redis = "^6.2.0"
+django-celery-beat = "^2.8.1"
 
 
 [build-system]
