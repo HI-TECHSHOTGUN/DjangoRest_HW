@@ -25,9 +25,28 @@ jobs:
       run: poetry install --no-interaction --no-root
 
     - name: 5. Запуск тестов
+      env:
+        SECRET_KEY: ${{ secrets.SECRET_KEY }}
+        PASSWORD: ${{ secrets.POSTGRES_PASSWORD }}
+        STRIPE_API_KEY: ${{ secrets.STRIPE_API_KEY }}
+        STRIPE_PUBLISHABLE_KEY: ${{ secrets.STRIPE_PUBLISHABLE_KEY }}
+        EMAIL_HOST_PASSWORD: ${{ secrets.EMAIL_HOST_PASSWORD }}
+
+        DEBUG: "False"
+
+        NAME: "test_db"
+        USER: "test_user"
+        HOST: "localhost"
+        PORT: "5432"
+
+        REDIS_URL: "redis://localhost:6379"
+
+        EMAIL_HOST: "localhost"
+        EMAIL_PORT: "1025"
+        EMAIL_USE_TLS: "False"
+        EMAIL_USE_SSL: "False"
+        EMAIL_HOST_USER: "test@example.com"
       run: |
-        # Запускаем тесты. Django автоматически подхватит 
-        # настройки для SQLite в памяти, как мы настроили в settings.py
         poetry run python manage.py test
 
   deploy:
