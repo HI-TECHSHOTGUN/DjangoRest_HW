@@ -22,7 +22,7 @@ jobs:
       run: pipx install poetry
 
     - name: 4. Установка зависимостей проекта
-      run: poetry install --no-interaction
+      run: poetry install --no-interaction --no-root
 
     - name: 5. Запуск тестов
       run: |
