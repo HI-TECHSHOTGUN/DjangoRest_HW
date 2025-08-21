@@ -8,11 +8,11 @@ from materials.models import Course, Lessons
 
 @admin.register(Course)
 class CourseAdmin(admin.ModelAdmin):
-    list_display = ('id', 'name')
+    list_display = ("id", "name")
 
 
 @admin.register(Lessons)
 class LessonsAdmin(admin.ModelAdmin):
-    list_display = ('id', 'name', 'course')
-    list_filter = ('course',)
-    search_fields = ('name', 'description')
+    list_display = ("id", "name", "course")
+    list_filter = ("course",)
+    search_fields = ("name", "description")

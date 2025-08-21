@@ -8,4 +8,4 @@ class UsersConfig(AppConfig):
     name = "users"
 
     def ready(self):
-        stripe.api_key = os.getenv('STRIPE_API_KEY')
+        stripe.api_key = os.getenv("STRIPE_API_KEY")

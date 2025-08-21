@@ -14,12 +14,13 @@ from .services import create_stripe_product, create_stripe_price, create_stripe_
 
 
 class UserViewSet(viewsets.ModelViewSet):
-    """ ViewSet для модели Пользователя """
+    """ViewSet для модели Пользователя"""
+
     queryset = User.objects.all()
     serializer_class = UserSerializer
 
     def get_permissions(self):
-        if self.action == 'create':
+        if self.action == "create":
             self.permission_classes = [AllowAny]
 
         return super().get_permissions()
@@ -36,22 +37,24 @@ class PaymentCreateAPIView(generics.CreateAPIView):
 
     def post(self, request, *args, **kwargs):
         # Получаем курс из запроса
-        course_id = request.data.get('course_id')
+        course_id = request.data.get("course_id")
         if not course_id:
-            return Response({"error": "course_id is required"}, status=status.HTTP_400_BAD_REQUEST)
+            return Response(
+                {"error": "course_id is required"}, status=status.HTTP_400_BAD_REQUEST
+            )
 
         course = get_object_or_404(Course, pk=course_id)
         payment = Payment.objects.create(
-            user=request.user,
-            paid_course=course,
-            amount=course.price
+            user=request.user, paid_course=course, amount=course.price
         )
         try:
             product_id = create_stripe_product(course.name)
             price_id = create_stripe_price(product_id, payment.amount)
             session_id, payment_link = create_stripe_session(price_id)
         except Exception as e:
-            return Response({"error": str(e)}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+            return Response(
+                {"error": str(e)}, status=status.HTTP_500_INTERNAL_SERVER_ERROR
+            )
 
         payment.stripe_session_id = session_id
         payment.payment_link = payment_link
