@@ -1,0 +1,60 @@
+name: Django CI/CD
+
+on:
+  push:
+    branches: [ "main" ]
+
+jobs:
+
+  test:
+    runs-on: ubuntu-latest
+
+    steps:
+    - name: 1. Клонирование репозитория
+      uses: actions/checkout@v4
+
+    - name: 2. Установка Python
+      uses: actions/setup-python@v5
+      with:
+        python-version: '3.11'
+
+    - name: 3. Установка Poetry
+      run: pipx install poetry
+
+    - name: 4. Установка зависимостей проекта
+      run: poetry install --no-interaction
+
+    - name: 5. Запуск тестов
+      run: |
+        # Запускаем тесты. Django автоматически подхватит 
+        # настройки для SQLite в памяти, как мы настроили в settings.py
+        poetry run python manage.py test
+
+  deploy:
+    runs-on: ubuntu-latest
+    needs: test
+    if: github.ref == 'refs/heads/main'
+
+    steps:
+    - name: 1. Деплой на сервер
+      uses: appleboy/ssh-action@master
+      with:
+        host: ${{ secrets.SSH_HOST }}
+        username: ${{ secrets.SSH_USERNAME }}
+        key: ${{ secrets.SSH_KEY }}
+        port: ${{ secrets.SSH_PORT || 22 }}
+
+        script: |
+          cd ~/DjangoRest_HW 
+          
+          git pull origin main
+          
+          /home/${{ secrets.SSH_USERNAME }}/.local/bin/poetry install --no-interaction
+          
+          /home/${{ secrets.SSH_USERNAME }}/.local/bin/poetry run python manage.py migrate
+          
+          /home/${{ secrets.SSH_USERNAME }}/.local/bin/poetry run python manage.py collectstatic --noinput
+          
+          sudo systemctl restart gunicorn.service 
+          
+          echo "✅ Деплой успешно завершен!"

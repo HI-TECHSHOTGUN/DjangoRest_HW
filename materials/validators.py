@@ -10,5 +10,5 @@ class YouTubeValidator:
     def __call__(self, value):
         url = value.get(self.field)
 
-        if url and 'youtube.com' not in url:
-            raise ValidationError('Ссылка должна вести на youtube.com')
+        if url and "youtube.com" not in url:
+            raise ValidationError("Ссылка должна вести на youtube.com")

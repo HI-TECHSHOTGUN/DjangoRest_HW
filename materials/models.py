@@ -18,9 +18,13 @@ class Course(models.Model):
         help_text="Загрузите фото",
     )
     description = models.TextField(blank=True, null=True, verbose_name="Описание курса")
-    owner = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE, null=True, blank=True)
+    owner = models.ForeignKey(
+        settings.AUTH_USER_MODEL, on_delete=models.CASCADE, null=True, blank=True
+    )
     price = models.PositiveIntegerField(default=1000, verbose_name="Цена курса")
-    last_update = models.DateTimeField(auto_now=True, verbose_name="Последнее обновление")
+    last_update = models.DateTimeField(
+        auto_now=True, verbose_name="Последнее обновление"
+    )
 
     def __str__(self):
         return f"{self.name}"
@@ -55,7 +59,9 @@ class Lessons(models.Model):
     course = models.ForeignKey(
         Course, on_delete=models.CASCADE, verbose_name="Курс", related_name="lessons"
     )
-    owner = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE, null=True, blank=True)
+    owner = models.ForeignKey(
+        settings.AUTH_USER_MODEL, on_delete=models.CASCADE, null=True, blank=True
+    )
 
     def __str__(self):
         return f"{self.name}"
@@ -63,12 +69,17 @@ class Lessons(models.Model):
     class Meta:
         verbose_name = "Урок"
         verbose_name_plural = "Уроки"
+        ordering = ("pk",)
 
 
 class Subscription(models.Model):
-    user = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE, related_name='subscriptions')
-    course = models.ForeignKey(Course, on_delete=models.CASCADE, related_name='subscriptions')
+    user = models.ForeignKey(
+        settings.AUTH_USER_MODEL, on_delete=models.CASCADE, related_name="subscriptions"
+    )
+    course = models.ForeignKey(
+        Course, on_delete=models.CASCADE, related_name="subscriptions"
+    )
 
     class Meta:
-        verbose_name = 'Подписка'
-        verbose_name_plural = 'Подписки'
+        verbose_name = "Подписка"
+        verbose_name_plural = "Подписки"

@@ -13,11 +13,11 @@ def send_course_update_email(course_id):
 
         for sub in subscriptions:
             send_mail(
-                subject=f'Обновление курса: {course.name}',
+                subject=f"Обновление курса: {course.name}",
                 message=f'Курс "{course.name}", на который вы подписаны, был обновлен.',
                 from_email=settings.DEFAULT_FROM_EMAIL,
                 recipient_list=[sub.user.email],
                 fail_silently=False,
             )
     except Course.DoesNotExist:
-        print(f'Извините что-то пошло не так')
+        print(f"Извините что-то пошло не так")
