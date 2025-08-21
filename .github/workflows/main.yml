@@ -4,6 +4,9 @@ on:
   push:
     branches: [ "main" ]
 
+env:
+  IMAGE_NAME: ghcr.io/hi-techshotgun/djangorest_hw
+
 jobs:
 
   test:
@@ -26,17 +29,17 @@ jobs:
 
     - name: 5. Запуск тестов
       env:
-        SECRET_KEY: ${{ secrets.SECRET_KEY }}
-        PASSWORD: ${{ secrets.POSTGRES_PASSWORD }}
-        STRIPE_API_KEY: ${{ secrets.STRIPE_API_KEY }}
-        STRIPE_PUBLISHABLE_KEY: ${{ secrets.STRIPE_PUBLISHABLE_KEY }}
-        EMAIL_HOST_PASSWORD: ${{ secrets.EMAIL_HOST_PASSWORD }}
+        SECRET_KEY: "dummy-secret-key-for-testing"
+        POSTGRES_PASSWORD: "dummy_password"
+        STRIPE_API_KEY: "dummy_stripe_api_key"
+        STRIPE_PUBLISHABLE_KEY: "dummy_stripe_publishable_key"
+        EMAIL_HOST_PASSWORD: "dummy_email_password"
 
         DEBUG: "False"
 
-        NAME: "test_db"
-        USER: "test_user"
-        HOST: "localhost"
+        POSTGRES_DB: "test_db"
+        POSTGRES_USER: "test_user"
+        POSTGRES_HOST: "localhost"
         PORT: "5432"
 
         REDIS_URL: "redis://localhost:6379"
@@ -49,9 +52,34 @@ jobs:
       run: |
         poetry run python manage.py test
 
-  deploy:
+  build:
     runs-on: ubuntu-latest
     needs: test
+    permissions:
+      contents: read
+      packages: write
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Log in to GitHub Container Registry
+        uses: docker/login-action@v3
+        with:
+          registry: ghcr.io
+          username: ${{ github.actor }}
+          password: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Build and push Docker image
+        uses: docker/build-push-action@v5
+        with:
+          context: .
+          push: true
+          tags: ${{ env.IMAGE_NAME }}:latest
+
+  deploy:
+    runs-on: ubuntu-latest
+    needs: build
     if: github.ref == 'refs/heads/main'
 
     steps:
@@ -64,16 +92,12 @@ jobs:
         port: ${{ secrets.SSH_PORT || 22 }}
 
         script: |
-          cd ~/DjangoRest_HW 
+          cd ~/DjangoRest_HW
           
-          git pull origin main
+          echo ${{ secrets.PAT }} | docker login ghcr.io -u ${{ github.actor }} --password-stdin
           
-          /home/${{ secrets.SSH_USERNAME }}/.local/bin/poetry install --no-interaction
+          docker pull ${{ env.IMAGE_NAME }}:latest
           
-          /home/${{ secrets.SSH_USERNAME }}/.local/bin/poetry run python manage.py migrate
+          docker-compose up -d
           
-          /home/${{ secrets.SSH_USERNAME }}/.local/bin/poetry run python manage.py collectstatic --noinput
-          
-          sudo systemctl restart gunicorn.service 
-          
-          echo "✅ Деплой успешно завершен!"
+          docker image prune -f
