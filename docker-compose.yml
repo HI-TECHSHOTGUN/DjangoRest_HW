@@ -25,10 +25,10 @@ services:
   app:
     image: ghcr.io/hi-techshotgun/djangorest_hw:latest
     restart: always
-    command: poetry run gunicorn --bind 0.0.0.0:8000 --workers=3 config.wsgi:application
     ports:
       - "8000:8000"
-    env_file: .env
+    env_file:
+      - .env
     depends_on:
       - migrate
 
