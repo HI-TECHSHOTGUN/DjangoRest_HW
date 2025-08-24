@@ -18,3 +18,5 @@ RUN poetry config virtualenvs.create false
 RUN poetry install --no-dev --no-root
 
 COPY . /app/
+
+CMD ["poetry", "run", "gunicorn", "--bind", "0.0.0.0:8000", "core.wsgi:application"]
