@@ -11,15 +11,16 @@ RUN apt-get update && apt-get install -y \
     libpq-dev \
     gcc \
     postgresql-client \
+    python3-pip \
     && rm -rf /var/lib/apt/lists/*
 
 
 COPY pyproject.toml poetry.lock /app/
 
 RUN pip install poetry==1.5.1
-
-
 RUN poetry install --no-dev --no-root
+
+RUN pip install gunicorn
 
 COPY . /app/
 
