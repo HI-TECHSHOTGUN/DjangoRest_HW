@@ -3,8 +3,7 @@ services:
     image: postgres:15-alpine
     volumes:
       - postgres_data:/var/lib/postgresql/data/
-    env_file:
-      - .env
+    env_file: .env
     expose:
       - "5432"
     restart: always
@@ -18,11 +17,9 @@ services:
   app:
     image: ghcr.io/hi-techshotgun/djangorest_hw:latest
     restart: always
-    command: gunicorn --bind 0.0.0.0:8000 --workers=3 config.wsgi:application
     ports:
       - "8000:8000"
-    env_file:
-      - .env
+    env_file: .env
     depends_on:
       - db
       - redis
@@ -31,8 +28,7 @@ services:
     image: ghcr.io/hi-techshotgun/djangorest_hw:latest
     restart: always
     command: poetry run celery -A config worker -l info
-    env_file:
-      - .env
+    env_file: .env
     depends_on:
       - redis
       - db
@@ -41,8 +37,7 @@ services:
     image: ghcr.io/hi-techshotgun/djangorest_hw:latest
     restart: always
     command: poetry run celery -A config beat -l info
-    env_file:
-      - .env
+    env_file: .env
     depends_on:
       - redis
       - db
