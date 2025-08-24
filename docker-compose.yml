@@ -14,38 +14,33 @@ services:
       - "6379"
     restart: always
 
-  migrate:
-    image: ghcr.io/hi-techshotgun/djangorest_hw:${IMAGE_TAG:-latest}
-    command: poetry run python manage.py migrate
-    env_file: .env
-    depends_on:
-        - db
-        - redis
-
   app:
-    image: ghcr.io/hi-techshotgun/djangorest_hw:${IMAGE_TAG:-latest}
+    image: ghcr.io/hi-techshotgun/djangorest_hw:latest
     restart: always
     ports:
       - "8000:8000"
     env_file: .env
     depends_on:
-      - migrate
+      - db
+      - redis
 
   celery_worker:
-    image: ghcr.io/hi-techshotgun/djangorest_hw:${IMAGE_TAG:-latest}
+    image: ghcr.io/hi-techshotgun/djangorest_hw:latest
     restart: always
     command: poetry run celery -A config worker -l info
     env_file: .env
     depends_on:
-      - migrate
+      - db
+      - redis
 
   celery_beat:
-    image: ghcr.io/hi-techshotgun/djangorest_hw:${IMAGE_TAG:-latest}
+    image: ghcr.io/hi-techshotgun/djangorest_hw:latest
     restart: always
     command: poetry run celery -A config beat -l info
     env_file: .env
     depends_on:
-      - migrate
+      - db
+      - redis
 
 volumes:
   postgres_data:
