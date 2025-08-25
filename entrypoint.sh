@@ -1,9 +1,9 @@
 #!/bin/sh
-
 set -e
 
-echo "Applying database migrations..."
-poetry run python manage.py migrate
+# миграции и collectstatic (если нужно)
+poetry run python manage.py migrate --noinput
+poetry run python manage.py collectstatic --noinput
 
-echo "Starting Gunicorn..."
-poetry run gunicorn --bind 0.0.0.0:8000 config.wsgi:application
+# передать управление на CMD/command из docker-compose
+exec "$@"
