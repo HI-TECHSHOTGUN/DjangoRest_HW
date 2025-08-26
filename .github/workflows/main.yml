@@ -98,11 +98,9 @@ jobs:
 
             git fetch --all
             git reset --hard origin/main
-            export IMAGE_TAG=${{ github.sha }}
 
             echo ${{ secrets.PAT }} | docker login ghcr.io -u ${{ github.actor }} --password-stdin
-            docker pull ${{ env.IMAGE_NAME }}:${IMAGE_TAG}
-
+            docker compose pull
             docker compose up -d
 
             docker image prune -f
