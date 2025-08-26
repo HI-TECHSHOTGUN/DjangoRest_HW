@@ -1,7 +1,7 @@
 #!/bin/sh
 set -e
 
-# миграции и collectstatic (если нужно)
+# миграции и collectstatic
 poetry run python manage.py migrate --noinput
 poetry run python manage.py collectstatic --noinput
 
